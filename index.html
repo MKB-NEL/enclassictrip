@@ -96,10 +96,10 @@
         }
 
         .sponsor-item {
-            width: 50px;
-            height: 50px;
+            width: 1000px;
+            height: 100px;
             margin: 0 15px;
-            border-radius: 8px;
+            border-radius: 20px;
             overflow: hidden;
         }
 
@@ -151,7 +151,7 @@
         <header class="flex flex-col items-start mb-6">
             <div class="flex justify-between items-center w-full">
                 <div>
-                    <h1 class="text-xl font-semibold text-gray-900">Enclassic</h1>
+                    <h1 class="text-xl font-semibold text-gray-900">Enclassic <i style="font-size:14px">by B&B Trip</i></h1>
                 </div>
                 <div class="flex space-x-3">
                     <button class="text-sm text-gray-500 hover:text-gray-900 transition-colors">
@@ -164,7 +164,7 @@
             </div>
             <div class="flex items-center mt-2">
                 <i class="fas fa-bell text-black text-sm mr-2"></i>
-                <button id="infoBtn" class="text-sm text-black font-medium hover:underline">Information</button>
+                <button id="infoBtn" class="text-sm text-black font-medium hover:underline"> Click to get Information</button>
             </div>
         </header>
 
@@ -219,7 +219,7 @@
                             </div>
                             <div>
                                 <h4 class="text-sm font-medium mb-1">Swimming</h4>
-                                <p class="text-xs text-gray-500">Sat, Jun 10 · 10 AM</p>
+                                <p class="text-xs text-gray-500">Do you know to swim?</p>
                             </div>
                         </div>
                     </div>
@@ -231,7 +231,7 @@
                             </div>
                             <div>
                                 <h4 class="text-sm font-medium mb-1">Eating</h4>
-                                <p class="text-xs text-gray-500">Sat, Jun 10 · 6 PM</p>
+                                <p class="text-xs text-gray-500">Its chinnesse cooking, Are we going to eat snakes?</p>
                             </div>
                         </div>
                     </div>
@@ -243,7 +243,19 @@
                             </div>
                             <div>
                                 <h4 class="text-sm font-medium mb-1">Nature Hike</h4>
-                                <p class="text-xs text-gray-500">Sun, Jun 11 · 7 AM</p>
+                                <p class="text-xs text-gray-500">Do you know a Crowned Crane?</p>
+                            </div>
+                        </div>
+                    </div>
+                     <!-- Event Card 4 -->
+                    <div class="bg-white rounded-2xl p-3 shadow-sm card-hover">
+                        <div class="flex items-start">
+                            <div class="bg-pink-100 text-purple-600 rounded-lg p-2 mr-2">
+                                <i class="fas fa-home text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-medium mb-1">Your Choice</h4>
+                                <p class="text-xs text-gray-500">Do a party or go Home? It will be your choice</p>
                             </div>
                         </div>
                     </div>
@@ -263,11 +275,11 @@
 
             <!-- Locations -->
             <section id="locations" class="mb-6 fade-in">
-                <h3 class="text-base font-semibold mb-3">Locations</h3>
+                <h3 class="text-base font-semibold mb-3">Trip Day Plan</h3>
                 <div class="space-y-4">
                     <!-- Location 1 -->
                     <div class="bg-white rounded-2xl p-4 shadow-sm card-hover">
-                        <h4 class="text-sm font-medium text-gray-900"Remera Bus park</h4>
+                        <h4 class="text-sm font-medium text-gray-900">Remera Bus park</h4>
                         <p class="text-xs text-gray-500">At: 9:30 AM</p>
                         <p class="text-xs text-gray-600">Activity: Meetup Location for all members.</p>
                         <div class="flex overflow-x-auto space-x-2 pb-2">
@@ -279,7 +291,7 @@
                     <div class="bg-white rounded-2xl p-4 shadow-sm card-hover">
                         <h4 class="text-sm font-medium text-gray-900">WAKA KIMI</h4>
                         <p class="text-xs text-gray-500">Hours: 2 Hours</p>
-                        <p class="text-xs text-gray-600">Activity: Hiking & Sightseeing</p>
+                        <p class="text-xs text-gray-600">Activity: Swimming and refreshing from the sunlight.</p>
                         <div class="flex overflow-x-auto space-x-2 pb-2">
                             <img src="https://i.ibb.co/mVc41SFX/images-4.jpg" alt="Hawaii 1" class="w-24 h-20 object-cover rounded-lg">
                             <img src="https://i.ibb.co/bRWKV5r9/images-2.jpg
@@ -289,35 +301,36 @@
                     </div>
                     <!-- Location 3 -->
                     <div class="bg-white rounded-2xl p-4 shadow-sm card-hover">
-                        <h4 class="text-sm font-medium text-gray-900">Santorini Cliffs</h4>
-                        <p class="text-xs text-gray-500">Hours: 10 AM - 6 PM</p>
-                        <p class="text-xs text-gray-600">Activity: Photography & Relaxation</p>
+                        <h4 class="text-sm font-medium text-gray-900">Great Wall Chinese Restauran.</h4>
+                        <p class="text-xs text-gray-500">Hours: 1 Hour</p>
+                        <p class="text-xs text-gray-600">Activity: Taking Launch in a chinnesse culture.</p>
                         <div class="flex overflow-x-auto space-x-2 pb-2">
-                            <img src="https://via.placeholder.com/100x80?text=Santorini+1" alt="Santorini 1" class="w-24 h-20 object-cover rounded-lg">
-                            <img src="https://via.placeholder.com/100x80?text=Santorini+2" alt="Santorini 2" class="w-24 h-20 object-cover rounded-lg">
-                            <img src="https://via.placeholder.com/100x80?text=Santorini+3" alt="Santorini 3" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://i.ibb.co/B2jqx6GX/great-wall-restaurant.jpg" alt="Santorini 1" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://i.ibb.co/rfFDZSj0/images-5.jpg" alt="Santorini 2" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://i.ibb.co/TxZcf7r7/buffet11.jpg
+" alt="Santorini 3" class="w-24 h-20 object-cover rounded-lg">
                         </div>
                     </div>
                     <!-- Location 4 -->
                     <div class="bg-white rounded-2xl p-4 shadow-sm card-hover">
-                        <h4 class="text-sm font-medium text-gray-900">Bali Rice Fields</h4>
-                        <p class="text-xs text-gray-500">Hours: 7 AM - 3 PM</p>
-                        <p class="text-xs text-gray-600">Activity: Cultural Tour & Nature Walk</p>
+                        <h4 class="text-sm font-medium text-gray-900">Umusambi Village.</h4>
+                        <p class="text-xs text-gray-500">Hours: 1 Hour 30 min</p>
+                        <p class="text-xs text-gray-600">Activity: A light walk through Umusambi Village & Taking pictures.</p>
                         <div class="flex overflow-x-auto space-x-2 pb-2">
-                            <img src="https://via.placeholder.com/100x80?text=Bali+1" alt="Bali 1" class="w-24 h-20 object-cover rounded-lg">
-                            <img src="https://via.placeholder.com/100x80?text=Bali+2" alt="Bali 2" class="w-24 h-20 object-cover rounded-lg">
-                            <img src="https://via.placeholder.com/100x80?text=Bali+3" alt="Bali 3" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://i.ibb.co/KxDNCnL0/50088118277-fd70c9e4e2-c.jpg" alt="Bali 1" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://i.ibb.co/HDZxbtpF/images-6.jpg" alt="Bali 2" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://i.ibb.co/r2bJf1yJ/Screenshot-2025-07-22-225135.png" alt="Bali 3" class="w-24 h-20 object-cover rounded-lg">
                         </div>
                     </div>
                     <!-- Location 5 -->
                     <div class="bg-white rounded-2xl p-4 shadow-sm card-hover">
-                        <h4 class="text-sm font-medium text-gray-900">Amalfi Coast</h4>
-                        <p class="text-xs text-gray-500">Hours: 9 AM - 5 PM</p>
-                        <p class="text-xs text-gray-600">Activity: Boating & Dining</p>
+                        <h4 class="text-sm font-medium text-gray-900">Your Choice.</h4>
+                        <p class="text-xs text-gray-500">Hours: When you want.</p>
+                        <p class="text-xs text-gray-600">Activity: You may go home or Go in the After Party</p>
                         <div class="flex overflow-x-auto space-x-2 pb-2">
-                            <img src="https://via.placeholder.com/100x80?text=Amalfi+1" alt="Amalfi 1" class="w-24 h-20 object-cover rounded-lg">
-                            <img src="https://via.placeholder.com/100x80?text=Amalfi+2" alt="Amalfi 2" class="w-24 h-20 object-cover rounded-lg">
-                            <img src="https://via.placeholder.com/100x80?text=Amalfi+3" alt="Amalfi 3" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://i.ibb.co/gFBK7WTm/images-9.jpg" alt="Amalfi 2" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://i.ibb.co/fY3jhL0X/images.png" alt="Amalfi 1" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://i.ibb.co/p6R8xmyT/images-8.jpg" alt="Amalfi 3" class="w-24 h-20 object-cover rounded-lg">
                         </div>
                     </div>
                 </div>
@@ -341,7 +354,7 @@
 
     <!-- Popup -->
     <div id="popup" class="popup">
-        <p>No info available.</p>
+        <p><h2><b>Hey Mr/Mrs</b></h2><br> Welcome, If you have any issue where you will go ,click the button "Where?".<br>And if you want to know the price, it will be announced Soon.</p>.</p>
     </div>
     <div id="overlay" class="overlay"></div>
 
