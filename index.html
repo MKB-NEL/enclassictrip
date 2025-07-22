@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Enclassic Trip</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&display=swap');
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+            -webkit-font-smoothing: antialiased;
+            margin: 0;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #007aff, #34c759);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .thin-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.1), transparent);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .ios-button {
+            padding: 8px 16px;
+            font-size: 14px;
+            line-height: 1.4;
+            border-radius: 10px;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .ios-button:hover {
+            transform: scale(1.03);
+        }
+
+        .seats-counter {
+            display: inline-block;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .seats-section {
+            animation: bounceIn 0.8s ease-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.95); }
+            60% { opacity: 1; transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        /* Sponsors (Static Display) */
+        .sponsors-container {
+            position: relative;
+            width: 100%;
+            height: 60px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .sponsor-item {
+            width: 50px;
+            height: 50px;
+            margin: 0 15px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .sponsor-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @supports (padding: env(safe-area-inset-top)) {
+            body {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
+            }
+        }
+
+        /* Popup Styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            text-align: center;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <div class="max-w-md mx-auto w-full px-4 pt-6 pb-12 flex-grow">
+        <!-- Header -->
+        <header class="flex flex-col items-start mb-6">
+            <div class="flex justify-between items-center w-full">
+                <div>
+                    <h1 class="text-xl font-semibold text-gray-900">Enclassic</h1>
+                </div>
+                <div class="flex space-x-3">
+                    <button class="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                        <i class="fas fa-user"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="flex items-center mt-2">
+                <i class="fas fa-bell text-black text-sm mr-2"></i>
+                <button id="infoBtn" class="text-sm text-black font-medium hover:underline">Information</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Hero Section -->
+            <div class="bg-white rounded-3xl p-5 shadow-sm mb-6 card-hover fade-in">
+                <div class="flex flex-col items-center">
+                    <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-green-500 flex items-center justify-center mb-4">
+                        <i class="fas fa-umbrella-beach text-white text-3xl"></i>
+                    </div>
+                    <div class="text-center">
+                        <h2 class="text-2xl font-semibold mb-1 gradient-text">Enclassic Trip</h2>
+                        <p class="text-xs text-gray-500 mb-2">Season 1 (Summer vibes) is loading</p>
+                        <p class="text-sm text-gray-600 mb-4">Join the trip and experience unforgettable summer moments with like-minded travelers.</p>
+                        <div class="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-2">
+                            <a href="https://chat.whatsapp.com/K8YtZzh8gfvHPDJIYI8mQk" target="_blank" class="ios-button bg-gradient-to-r from-blue-500 to-green-500 text-white font-medium flex items-center justify-center space-x-2">
+                                <i class="fab fa-whatsapp"></i>
+                                <span>Join Trip</span>
+                            </a>
+                            <button id="whereBtn" class="ios-button bg-gray-100 text-gray-700 font-medium flex items-center justify-center space-x-2">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Where?</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sponsors -->
+            <section class="mb-6 fade-in">
+                <h3 class="text-base font-semibold mb-3">Sponsors</h3>
+                <div class="sponsors-container">
+                    <div class="sponsor-item"><img src="https://i.ibb.co/v4hRrCYT/Screenshot-2025-07-22-211422-removebg-preview.png" alt="btem@fficial" class="w-full h-full object-cover"></div>
+                    <div class="sponsor-item"><img src="https://i.ibb.co/SD5NpS7h/Screenshot-2025-07-22-190303-removebg-preview.png" alt="B&B Trip" class="w-full h-full object-cover"></div>
+                    <div class="sponsor-item"><img src="https://i.ibb.co/KcP766Jw/Image-fx-6.png" alt="Kinaflix Team" class="w-full h-full object-cover"></div>
+                </div>
+            </section>
+
+            <!-- Upcoming Events -->
+            <section class="mb-6 fade-in">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-base font-semibold">Upcoming Events</h3>
+                    <button class="text-xs text-blue-500 hover:underline">See All</button>
+                </div>
+                <div class="grid grid-cols-1 gap-3">
+                    <!-- Event Card 1 -->
+                    <div class="bg-white rounded-2xl p-3 shadow-sm card-hover">
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 text-blue-600 rounded-lg p-2 mr-2">
+                                <i class="fas fa-swimmer text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-medium mb-1">Swimming</h4>
+                                <p class="text-xs text-gray-500">Sat, Jun 10 · 10 AM</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Event Card 2 -->
+                    <div class="bg-white rounded-2xl p-3 shadow-sm card-hover">
+                        <div class="flex items-start">
+                            <div class="bg-orange-100 text-orange-600 rounded-lg p-2 mr-2">
+                                <i class="fas fa-utensils text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-medium mb-1">Eating</h4>
+                                <p class="text-xs text-gray-500">Sat, Jun 10 · 6 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Event Card 3 -->
+                    <div class="bg-white rounded-2xl p-3 shadow-sm card-hover">
+                        <div class="flex items-start">
+                            <div class="bg-green-100 text-green-600 rounded-lg p-2 mr-2">
+                                <i class="fas fa-hiking text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-medium mb-1">Nature Hike</h4>
+                                <p class="text-xs text-gray-500">Sun, Jun 11 · 7 AM</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Remaining Seats -->
+            <section class="mb-6 fade-in seats-section">
+                <h3 class="text-base font-semibold mb-3">Remaining Seats</h3>
+                <div class="bg-white rounded-2xl p-4 shadow-sm card-hover text-center">
+                    <p class="text-sm text-gray-600">Hurry, spots are filling up!</p>
+                    <p class="text-2xl font-semibold text-blue-500 mt-2">
+                        <span class="seats-counter">25</span> Available Seats
+                    </p>
+                </div>
+            </section>
+
+            <!-- Locations -->
+            <section id="locations" class="mb-6 fade-in">
+                <h3 class="text-base font-semibold mb-3">Locations</h3>
+                <div class="space-y-4">
+                    <!-- Location 1 -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm card-hover">
+                        <h4 class="text-sm font-medium text-gray-900">Miami Beach</h4>
+                        <p class="text-xs text-gray-500">Hours: 9 AM - 5 PM</p>
+                        <p class="text-xs text-gray-600">Activity: Sunbathing & Swimming</p>
+                        <div class="flex overflow-x-auto space-x-2 pb-2">
+                            <img src="https://via.placeholder.com/100x80?text=Miami+1" alt="Miami 1" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://via.placeholder.com/100x80?text=Miami+2" alt="Miami 2" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://via.placeholder.com/100x80?text=Miami+3" alt="Miami 3" class="w-24 h-20 object-cover rounded-lg">
+                        </div>
+                    </div>
+                    <!-- Location 2 -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm card-hover">
+                        <h4 class="text-sm font-medium text-gray-900">Hawaii Volcanoes</h4>
+                        <p class="text-xs text-gray-500">Hours: 8 AM - 4 PM</p>
+                        <p class="text-xs text-gray-600">Activity: Hiking & Sightseeing</p>
+                        <div class="flex overflow-x-auto space-x-2 pb-2">
+                            <img src="https://via.placeholder.com/100x80?text=Hawaii+1" alt="Hawaii 1" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://via.placeholder.com/100x80?text=Hawaii+2" alt="Hawaii 2" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://via.placeholder.com/100x80?text=Hawaii+3" alt="Hawaii 3" class="w-24 h-20 object-cover rounded-lg">
+                        </div>
+                    </div>
+                    <!-- Location 3 -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm card-hover">
+                        <h4 class="text-sm font-medium text-gray-900">Santorini Cliffs</h4>
+                        <p class="text-xs text-gray-500">Hours: 10 AM - 6 PM</p>
+                        <p class="text-xs text-gray-600">Activity: Photography & Relaxation</p>
+                        <div class="flex overflow-x-auto space-x-2 pb-2">
+                            <img src="https://via.placeholder.com/100x80?text=Santorini+1" alt="Santorini 1" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://via.placeholder.com/100x80?text=Santorini+2" alt="Santorini 2" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://via.placeholder.com/100x80?text=Santorini+3" alt="Santorini 3" class="w-24 h-20 object-cover rounded-lg">
+                        </div>
+                    </div>
+                    <!-- Location 4 -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm card-hover">
+                        <h4 class="text-sm font-medium text-gray-900">Bali Rice Fields</h4>
+                        <p class="text-xs text-gray-500">Hours: 7 AM - 3 PM</p>
+                        <p class="text-xs text-gray-600">Activity: Cultural Tour & Nature Walk</p>
+                        <div class="flex overflow-x-auto space-x-2 pb-2">
+                            <img src="https://via.placeholder.com/100x80?text=Bali+1" alt="Bali 1" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://via.placeholder.com/100x80?text=Bali+2" alt="Bali 2" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://via.placeholder.com/100x80?text=Bali+3" alt="Bali 3" class="w-24 h-20 object-cover rounded-lg">
+                        </div>
+                    </div>
+                    <!-- Location 5 -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm card-hover">
+                        <h4 class="text-sm font-medium text-gray-900">Amalfi Coast</h4>
+                        <p class="text-xs text-gray-500">Hours: 9 AM - 5 PM</p>
+                        <p class="text-xs text-gray-600">Activity: Boating & Dining</p>
+                        <div class="flex overflow-x-auto space-x-2 pb-2">
+                            <img src="https://via.placeholder.com/100x80?text=Amalfi+1" alt="Amalfi 1" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://via.placeholder.com/100x80?text=Amalfi+2" alt="Amalfi 2" class="w-24 h-20 object-cover rounded-lg">
+                            <img src="https://via.placeholder.com/100x80?text=Amalfi+3" alt="Amalfi 3" class="w-24 h-20 object-cover rounded-lg">
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-4">
+        <div class="max-w-md mx-auto px-4">
+            <div class="thin-divider mb-3"></div>
+            <div class="flex justify-between items-center">
+                <p class="text-xs text-gray-500">© 2025 Enclassic Trip by B&B Trip Inc.</p>
+                <div class="flex space-x-3">
+                    <a href="#" class="text-xs text-gray-500 hover:text-gray-700">Terms</a>
+                    <a href="#" class="text-xs text-gray-500 hover:text-gray-700">Privacy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Popup -->
+    <div id="popup" class="popup">
+        <p>No info available.</p>
+    </div>
+    <div id="overlay" class="overlay"></div>
+
+    <script>
+        // JavaScript for handling "Where?" button and smooth scroll
+        document.getElementById('whereBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('locations').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // JavaScript for handling Information popup
+        document.getElementById('infoBtn').addEventListener('click', function() {
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        });
+
+        document.getElementById('overlay').addEventListener('click', function() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        });
+
+        // Fade-in animation on scroll
+        const fadeElements = document.querySelectorAll('.fade-in');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.3 });
+
+        fadeElements.forEach(element => observer.observe(element));
+    </script>
+</body>
+</html>
