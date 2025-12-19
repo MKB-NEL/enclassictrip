@@ -1,0 +1,8 @@
+{
+  "name": "security-training-site",
+  "version": "1.0.0",
+  "description": "Authorized penetration testing site",
+  "scripts": {
+    "dev": "vercel dev"
+  }
+}
