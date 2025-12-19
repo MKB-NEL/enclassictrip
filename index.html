@@ -39,32 +39,8 @@
     </div>
     
     <!-- Firebase SDK -->
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-        
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAAEYQGHXf7t5VgI9MkXO1RpiCH5w98GPw",
-            authDomain: "laptopms.firebaseapp.com",
-            databaseURL: "https://laptopms-default-rtdb.firebaseio.com",
-            projectId: "laptopms",
-            storageBucket: "laptopms.firebasestorage.app",
-            messagingSenderId: "965071744622",
-            appId: "1:965071744622:web:3411e7ada3d13ef070007f",
-            measurementId: "G-2TCNV6ZRY4"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const db = getFirestore(app);
-        
-        // Make Firestore available globally
-        window.firestoreDB = db;
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     
     <script src="script.js"></script>
 </body>
