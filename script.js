@@ -1,8 +1,7 @@
-// Firebase configuration
+// Initialize Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyAAEYQGHXf7t5VgI9MkXO1RpiCH5w98GPw",
     authDomain: "laptopms.firebaseapp.com",
-    databaseURL: "https://laptopms-default-rtdb.firebaseio.com",
     projectId: "laptopms",
     storageBucket: "laptopms.firebasestorage.app",
     messagingSenderId: "965071744622",
