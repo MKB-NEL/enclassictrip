@@ -1,33 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Sign Up</title>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
+  <title>Sign Up</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAAEYQGHXf7t5VgI9MkXO1RpiCH5w98GPw",
+      authDomain: "laptopms.firebaseapp.com",
+      databaseURL: "https://laptopms-default-rtdb.firebaseio.com",
+      projectId: "laptopms",
+      storageBucket: "laptopms.firebasestorage.app",
+      messagingSenderId: "965071744622",
+      appId: "1:965071744622:web:3411e7ada3d13ef070007f",
+      measurementId: "G-2TCNV6ZRY4"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.signup = function() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          // Redirect to payment page with email as query param
+          window.location.href = `payment.html?email=${encodeURIComponent(email)}`;
+        })
+        .catch(err => alert(err.message));
+    }
+  </script>
 </head>
 <body>
-<h1>Sign Up</h1>
-<input id="email" placeholder="Email"><br>
-<input id="password" type="password" placeholder="Password"><br>
-<button onclick="signup()">Sign Up</button>
-
-<script>
-const firebaseConfig = {
-  apiKey: "YOUR_FIREBASE_API_KEY",
-  authDomain: "YOUR_FIREBASE_AUTH_DOMAIN",
-  projectId: "YOUR_FIREBASE_PROJECT_ID"
-};
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-
-function signup() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  auth.createUserWithEmailAndPassword(email, password)
-      .then(() => window.location.href = `payment.html?email=${encodeURIComponent(email)}`)
-      .catch(e => alert(e.message));
-}
-</script>
+  <h1>Sign Up</h1>
+  <input id="email" placeholder="Email" /><br>
+  <input id="password" type="password" placeholder="Password" /><br>
+  <button onclick="signup()">Sign Up</button>
 </body>
 </html>
-
