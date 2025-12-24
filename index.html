@@ -1,67 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Send Money via Paypack</title>
+<meta charset="UTF-8">
+<title>Paypack Payment</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #0f172a;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    .card {
+        background: #020617;
+        padding: 25px;
+        width: 360px;
+        border-radius: 12px;
+        box-shadow: 0 0 30px rgba(0,0,0,.5);
+    }
+    input, button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        border-radius: 6px;
+        border: none;
+        font-size: 16px;
+    }
+    input {
+        background: #0f172a;
+        color: #fff;
+        border: 1px solid #1e293b;
+    }
+    button {
+        background: #22c55e;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    button:disabled {
+        background: #64748b;
+    }
+    .status {
+        margin-top: 15px;
+        font-size: 14px;
+        white-space: pre-wrap;
+    }
+</style>
 </head>
+
 <body>
-    <h1>Send Money (For Personal Use Only!)</h1>
-    <form id="money-form">
-        <label>Phone Number:</label>
-        <input type="text" id="phone" placeholder="2507XXXXXXXX"><br><br>
-        <label>Amount (RWF):</label>
-        <input type="number" id="amount" placeholder="5000"><br><br>
-        <button type="submit">Send Money</button>
-    </form>
+<div class="card">
+    <h2>Pay with Paypack</h2>
 
-    <pre id="result"></pre>
+    <input id="email" placeholder="Email address">
+    <input id="amount" type="number" placeholder="Amount (RWF)">
+    <button onclick="startPayment()">Pay Now</button>
 
-    <script>
-        const APP_ID = "754e0c04-e095-11f0-bc44-deadd43720af";
-        const APP_SECRET = "c1a2e6e99420fdd0a04f07df8580bb91da39a3ee5e6b4b0d3255bfef95601890afd80709";
+    <div class="status" id="status"></div>
+</div>
 
-        async function getAccessToken() {
-            const res = await fetch('https://payments.paypack.rw/api/auth/agents/authorize', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ client_id: APP_ID, client_secret: APP_SECRET })
-            });
-            const data = await res.json();
-            return data.access;
-        }
+<script>
+const APP_ID = "754e0c04-e095-11f0-bc44-deadd43720af";
 
-        async function sendMoney(phone, amount) {
-            const token = await getAccessToken();
-            const res = await fetch('https://payments.paypack.rw/api/transactions/send', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    phone_number: phone,
-                    amount: amount,
-                    app_id: APP_ID,
-                    currency: "RWF",
-                    reason: "Test Payment"
-                })
-            });
-            const data = await res.json();
-            return data;
-        }
+async function startPayment() {
+    const email = document.getElementById("email").value;
+    const amount = document.getElementById("amount").value;
+    const status = document.getElementById("status");
 
-        document.getElementById('money-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const phone = document.getElementById('phone').value;
-            const amount = document.getElementById('amount').value;
+    if (!email || !amount || amount < 100) {
+        status.textContent = "❌ Enter valid email and amount";
+        return;
+    }
 
-            try {
-                const result = await sendMoney(phone, amount);
-                document.getElementById('result').textContent = JSON.stringify(result, null, 2);
-            } catch (err) {
-                document.getElementById('result').textContent = "Error: " + err;
-            }
+    status.textContent = "⏳ Creating checkout...";
+
+    try {
+        const res = await fetch("https://checkout.paypack.rw/api/checkouts/initiate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({
+                app_id: APP_ID,
+                email: email,
+                items: [
+                    {
+                        name: "Service Payment",
+                        price: Number(amount),
+                        quantity: 1
+                    }
+                ]
+            })
         });
-    </script>
+
+        const data = await res.json();
+
+        if (data?.redirect_url) {
+            window.location.href = data.redirect_url;
+        } else {
+            status.textContent = JSON.stringify(data, null, 2);
+        }
+    } catch (err) {
+        status.textContent = "❌ Network or Paypack error";
+    }
+}
+</script>
 </body>
 </html>
