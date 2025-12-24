@@ -5,13 +5,12 @@
 </head>
 <body>
   <h1>Pay 500 RWF</h1>
-  <button onclick="pay()">Pay Now</button>
+  <p>Processing your payment... please do not close this window.</p>
 
   <script>
-    async function pay() {
-      const email = new URLSearchParams(window.location.search).get('email');
+    const email = new URLSearchParams(window.location.search).get('email');
 
-      // Call Vercel serverless function to create checkout
+    async function createCheckout() {
       const res = await fetch('/api/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -20,13 +19,30 @@
       const data = await res.json();
 
       if (data.payment_link) {
-        // Redirect to Paypack checkout
+        // Redirect to Paypack checkout page
         window.location.href = data.payment_link;
       } else {
         alert('Error creating checkout');
         console.log(data);
       }
     }
+
+    async function checkPaid() {
+      const res = await fetch(`/api/check-paid?email=${encodeURIComponent(email)}`);
+      const data = await res.json();
+
+      if (data.paid) {
+        window.location.href = 'home.html';
+      } else {
+        setTimeout(checkPaid, 3000); // check every 3 seconds
+      }
+    }
+
+    // Start payment
+    createCheckout();
+
+    // Start polling Firestore
+    checkPaid();
   </script>
 </body>
 </html>
