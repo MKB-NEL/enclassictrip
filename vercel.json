@@ -1,9 +1,10 @@
 {
-  "name": "paypack-app",
-  "version": "1.0.0",
-  "type": "module",
-  "dependencies": {
-    "firebase-admin": "^11.9.0",
-    "node-fetch": "^3.3.2"
-  }
+  "version": 2,
+  "builds": [
+    { "src": "api/*.js", "use": "@vercel/node" },
+    { "src": "frontend/*", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1.js" }
+  ]
 }
