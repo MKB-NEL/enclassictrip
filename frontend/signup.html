@@ -26,7 +26,7 @@
 
       createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
-          // Redirect to payment page with email as query param
+          // Redirect to payment page with email query param
           window.location.href = `payment.html?email=${encodeURIComponent(email)}`;
         })
         .catch(err => alert(err.message));
