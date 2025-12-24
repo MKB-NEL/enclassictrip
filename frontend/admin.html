@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel - Send Money</title>
+</head>
+<body>
+  <h1>Admin Panel - Send Money</h1>
+
+  <form id="cashoutForm">
+    <label>Phone Number:</label><br>
+    <input type="text" id="number" placeholder="e.g. 078xxxxxxx" required><br><br>
+
+    <label>Amount (RWF):</label><br>
+    <input type="number" id="amount" placeholder="500" required><br><br>
+
+    <button type="submit">Send Money</button>
+  </form>
+
+  <p id="result"></p>
+
+  <script>
+    const form = document.getElementById('cashoutForm');
+    const result = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const number = document.getElementById('number').value;
+      const amount = parseInt(document.getElementById('amount').value);
+
+      result.textContent = "Sending money...";
+
+      try {
+        const res = await fetch('/api/cashout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ number, amount })
+        });
+
+        const data = await res.json();
+
+        if (data.status === 'pending' || data.status === 'success') {
+          result.textContent = `Money sent successfully! Ref: ${data.ref}, Status: ${data.status}`;
+        } else {
+          result.textContent = `Error: ${JSON.stringify(data)}`;
+        }
+
+      } catch (err) {
+        result.textContent = "Error sending money: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
