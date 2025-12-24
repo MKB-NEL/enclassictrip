@@ -1,27 +1,32 @@
-
 <!DOCTYPE html>
 <html>
-<head><title>Payment</title></head>
+<head>
+  <title>Payment</title>
+</head>
 <body>
-<h1>Pay 500 RWF</h1>
-<button onclick="pay()">Pay Now</button>
+  <h1>Pay 500 RWF</h1>
+  <button onclick="pay()">Pay Now</button>
 
-<script>
-async function pay() {
-  const email = new URLSearchParams(window.location.search).get('email');
-  const res = await fetch('/api/create-checkout', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email })
-  });
-  const data = await res.json();
-  if (data.payment_link) {
-      window.location.href = data.payment_link;
-  } else {
-      alert('Error creating checkout');
-      console.log(data);
-  }
-}
-</script>
+  <script>
+    async function pay() {
+      const email = new URLSearchParams(window.location.search).get('email');
+
+      // Call Vercel serverless function to create checkout
+      const res = await fetch('/api/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+
+      if (data.payment_link) {
+        // Redirect to Paypack checkout
+        window.location.href = data.payment_link;
+      } else {
+        alert('Error creating checkout');
+        console.log(data);
+      }
+    }
+  </script>
 </body>
 </html>
