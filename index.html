@@ -5,7 +5,7 @@
     <title>Send Money via Paypack</title>
 </head>
 <body>
-    <h1>Send Money</h1>
+    <h1>Send Money (For Personal Use Only!)</h1>
     <form id="money-form">
         <label>Phone Number:</label>
         <input type="text" id="phone" placeholder="2507XXXXXXXX"><br><br>
@@ -14,21 +14,53 @@
         <button type="submit">Send Money</button>
     </form>
 
-    <p id="result"></p>
+    <pre id="result"></pre>
 
     <script>
+        const APP_ID = "754e0c04-e095-11f0-bc44-deadd43720af";
+        const APP_SECRET = "c1a2e6e99420fdd0a04f07df8580bb91da39a3ee5e6b4b0d3255bfef95601890afd80709";
+
+        async function getAccessToken() {
+            const res = await fetch('https://payments.paypack.rw/api/auth/agents/authorize', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ client_id: APP_ID, client_secret: APP_SECRET })
+            });
+            const data = await res.json();
+            return data.access;
+        }
+
+        async function sendMoney(phone, amount) {
+            const token = await getAccessToken();
+            const res = await fetch('https://payments.paypack.rw/api/transactions/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    phone_number: phone,
+                    amount: amount,
+                    app_id: APP_ID,
+                    currency: "RWF",
+                    reason: "Test Payment"
+                })
+            });
+            const data = await res.json();
+            return data;
+        }
+
         document.getElementById('money-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const phone = document.getElementById('phone').value;
             const amount = document.getElementById('amount').value;
 
-            const res = await fetch('http://localhost:3000/send-money', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone, amount })
-            });
-            const data = await res.json();
-            document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+            try {
+                const result = await sendMoney(phone, amount);
+                document.getElementById('result').textContent = JSON.stringify(result, null, 2);
+            } catch (err) {
+                document.getElementById('result').textContent = "Error: " + err;
+            }
         });
     </script>
 </body>
